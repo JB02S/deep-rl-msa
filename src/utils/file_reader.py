@@ -1,13 +1,15 @@
 def read_fasta(filename):
     """
+
     Reads a FASTA file and returns a dictionary where the keys are the sequence
     identifiers and the values are the sequences.
 
-    Parameters:
-    - filename: Path to the FASTA file.
+    Args:
+        filename: Path to the FASTA file.
 
     Returns:
-    - A list of the sequences in the FASTA file.
+        A list of the sequences in the FASTA file.
+
     """
     sequences = []
     with open(filename, 'r') as file:

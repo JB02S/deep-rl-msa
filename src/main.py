@@ -15,10 +15,8 @@ def main():
         print("No sequences found in the provided path.")
         return
 
-    # Initialise the environment
+    # Initialise the environment and agent
     env = SequenceAlignmentEnvironment(sequences)
-
-    # Initialise the DRL-based aligner
     aligner = DRLAligner()
 
     # Perform alignment
