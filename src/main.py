@@ -17,7 +17,7 @@ def main():
 
     # Initialise the environment
     env = SequenceAlignmentEnvironment(sequences)
-
+    
     # Initialise the DRL-based aligner
     aligner = DRLAligner()
 
