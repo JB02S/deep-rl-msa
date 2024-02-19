@@ -24,6 +24,33 @@ class SequenceAlignmentEnvironment():
     def get_actions(self):
         return self.possible_actions
 
+    def calculate_sp_score(self):
+        match_score = 1
+        mismatch_score = -1
+        gap_penalty = -2
+        sp_score = 0
+
+        # Iterate over each column
+        for col in range(len(self.sequences[0])):
+            # Iterate over each pair of sequences in the MSA
+            for i in range(len(self.sequences)):
+                for j in range(i + 1, len(self.sequences)):
+                    char1 = self.sequences[i][col]
+                    char2 = self.sequences[j][col]
+
+                    # Calculate the score for this pair
+                    if char1 == char2:
+                        if char1 != '-':  # Both are matching nucleotides
+                            sp_score += match_score
+                        # If both are gaps, do not add any score (skip)
+                    else:
+                        if char1 == '-' or char2 == '-':  # One is a gap
+                            sp_score += gap_penalty
+                        else:  # Mismatch
+                            sp_score += mismatch_score
+
+        return sp_score
+
     def step(self, action, pos):
         """
 
@@ -39,26 +66,28 @@ class SequenceAlignmentEnvironment():
             done: A boolean indicating if the episode has ended.
 
         """
-        reward = 0 # Place holder
-
+        initial_sp = self.calculate_sp_score()
         sequence_index, amino_acid_position = pos
         sequence = list(self.sequences[sequence_index])
         target = sequence[amino_acid_position]
 
         if target == "-":
-            return self.sequences, False  # Can't move a dash
+            return self.sequences, -0.5, False  # Can't move a dash
 
         if action == "l":
             new_position = amino_acid_position - 1
         elif action == "r":
             new_position = amino_acid_position + 1
         else:
-            return self.sequences, reward, False  # Invalid action
+            return self.sequences, -0.5, False  # Invalid action
 
         # Update position if it is possible to make the move (there is empty space)
         if 0 <= new_position < len(sequence) and sequence[new_position] == "-":
             sequence[new_position], sequence[amino_acid_position] = sequence[amino_acid_position], sequence[new_position]
             self.sequences[sequence_index] = ''.join(sequence)
-            return self.sequences, reward, True
+            return self.sequences, self.calculate_sp_score(), True
         else:
-            return self.sequences, reward, False
+            return self.sequences, -0.5, False
+
+
+
