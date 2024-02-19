@@ -1,6 +1,7 @@
 import argparse
 from aligner.drl_aligner import DRLAligner
 from utils.file_reader import read_fasta
+from environment.sequence_alignment_environment import SequenceAlignmentEnvironment
 
 def main():
     # Parse command-line arguments
@@ -14,7 +15,10 @@ def main():
         print("No sequences found in the provided path.")
         return
 
-    # Initialize the DRL-based aligner
+    # Initialise the environment
+    env = SequenceAlignmentEnvironment(sequences)
+
+    # Initialise the DRL-based aligner
     aligner = DRLAligner()
 
     # Perform alignment
