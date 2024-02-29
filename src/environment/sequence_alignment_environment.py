@@ -1,7 +1,7 @@
 import random
 
 
-class SequenceAlignmentEnvironment():
+class SequenceAlignmentEnvironment:
     def __init__(self, sequences):
         self.sequences = self.pad_sequences(sequences)
         self.possible_actions = ["l", "r"]
@@ -89,5 +89,10 @@ class SequenceAlignmentEnvironment():
         else:
             return self.sequences, -0.5, False
 
+    def toString(self):
+        env = ""
+        for sequence in self.sequences:
+            env += sequence + "\n"
+        return env
 
 

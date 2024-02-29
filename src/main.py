@@ -7,6 +7,7 @@ def main():
     # Parse command-line arguments
     parser = argparse.ArgumentParser(description="Multiple Sequence Alignment using Deep Reinforcement Learning")
     parser.add_argument('-p', '--path', type=str, required=True, help="Path to the directory containing FASTA files")
+    parser.add_argument('-v', action='store_true', help="Print out aligned sequences after alignment")
     args = parser.parse_args()
 
     # Read input FASTA file
@@ -22,11 +23,15 @@ def main():
     # Perform alignment
     alignment_result = aligner.align(sequences)
 
-    # Optionally, you can add code here to save the alignment_result to a file or process it further
+    # Print out alignment if -v
+    if args.v:
+        print(env.toString())
 
-    # Print alignment result to stdout or process further as needed
+
+
+    # Print alignment result to stdout
     print("Alignment Result:")
-    print(alignment_result)
+    print(SequenceAlignmentEnvironment.calculate_sp_score(env))
 
 if __name__ == "__main__":
     main()
