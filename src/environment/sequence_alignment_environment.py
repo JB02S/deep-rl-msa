@@ -68,6 +68,7 @@ class SequenceAlignmentEnvironment:
             done: A boolean indicating if the episode has ended.
 
         """
+        print(action, pos)
         initial_sp = self.calculate_sp_score()
         sequence_index, amino_acid_position = pos
         sequence = list(self.sequences[sequence_index])

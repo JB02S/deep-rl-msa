@@ -1,8 +1,9 @@
 import argparse
 from aligner.drl_aligner import DRLAligner
-from src.aligner.rl_aligner import RLAligner
+from aligner.rl_aligner import RLAligner
 from utils.file_reader import read_fasta
 from environment.sequence_alignment_environment import SequenceAlignmentEnvironment
+from trainer.trainer import train_agent
 
 def main():
     # Parse command-line arguments
@@ -21,7 +22,8 @@ def main():
     env = SequenceAlignmentEnvironment(sequences)
     aligner = RLAligner(len(env.sequences[0]), len(env.sequences))
 
-
+    # Train agent
+    train_agent(aligner, env)
 
     # Perform alignment
     alignment_result = 0

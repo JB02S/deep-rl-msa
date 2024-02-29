@@ -17,10 +17,10 @@ def train_agent(agent, env, num_episodes=1000, alpha=0.1):
         done = False
         while not done:
             # Select action
-            action = agent.select_action()
+            action, pos = agent.select_action()
 
             # Take action and observe next state and reward
-            next_state, reward, done = env.step(env.possible_actions[action[0]], action)
+            next_state, reward, done = env.step(action, pos)
 
             # Update value function using TD(0) update rule
             agent.update_value_function(action, reward, next_state, alpha)

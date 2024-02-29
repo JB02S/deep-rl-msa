@@ -9,8 +9,10 @@ class RLAligner:
     def select_action(self):
         # Randomly select a sequence and a position to modify
         sequence_idx = np.random.randint(0, self.num_sequences)
-        position = np.random.randint(0, self.sequence_length)
-        return sequence_idx, position
+        amino_acid_pos = np.random.randint(0, self.sequence_length)
+        action = np.random.randint(0, 2)
+        action = "l" if action == 1 else "r"
+        return action, (sequence_idx, amino_acid_pos)
 
     def update_value_function(self, state, reward, next_state, alpha):
         # TD(0) update rule
