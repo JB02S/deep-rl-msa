@@ -3,6 +3,8 @@ import random
 
 class SequenceAlignmentEnvironment:
     def __init__(self, sequences):
+        # Keeping original for reset function during training
+        self.original_sequences = sequences
         self.sequences = self.pad_sequences(sequences)
         self.possible_actions = ["l", "r"]
 
@@ -94,5 +96,8 @@ class SequenceAlignmentEnvironment:
         for sequence in self.sequences:
             env += sequence + "\n"
         return env
+
+    def reset(self):
+        self.sequences = self.original_sequences
 
 
