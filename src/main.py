@@ -1,5 +1,6 @@
 import argparse
 from aligner.drl_aligner import DRLAligner
+from src.aligner.rl_aligner import RLAligner
 from utils.file_reader import read_fasta
 from environment.sequence_alignment_environment import SequenceAlignmentEnvironment
 
@@ -18,10 +19,12 @@ def main():
 
     # Initialise the environment and agent
     env = SequenceAlignmentEnvironment(sequences)
-    aligner = DRLAligner()
+    aligner = RLAligner(len(env.sequences[0]), len(env.sequences))
+
+
 
     # Perform alignment
-    alignment_result = aligner.align(sequences)
+    alignment_result = 0
 
     # Print out alignment if -v
     if args.v:
