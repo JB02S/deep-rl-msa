@@ -1,0 +1,31 @@
+2024-03-09 14:18:35,453 INFO    MainThread:1588 [wandb_setup.py:_flush():76] Current SDK version is 0.16.4
+2024-03-09 14:18:35,453 INFO    MainThread:1588 [wandb_setup.py:_flush():76] Configure stats pid to 1588
+2024-03-09 14:18:35,453 INFO    MainThread:1588 [wandb_setup.py:_flush():76] Loading settings from C:\Users\the_r\.config\wandb\settings
+2024-03-09 14:18:35,453 INFO    MainThread:1588 [wandb_setup.py:_flush():76] Loading settings from C:\Users\the_r\Projects\deep-rl-msa\wandb\settings
+2024-03-09 14:18:35,453 INFO    MainThread:1588 [wandb_setup.py:_flush():76] Loading settings from environment variables: {}
+2024-03-09 14:18:35,453 INFO    MainThread:1588 [wandb_setup.py:_flush():76] Applying setup settings: {'_disable_service': False}
+2024-03-09 14:18:35,453 INFO    MainThread:1588 [wandb_setup.py:_flush():76] Inferring run settings from compute environment: {'program': '<python with no main file>'}
+2024-03-09 14:18:35,453 INFO    MainThread:1588 [wandb_setup.py:_flush():76] Applying login settings: {'api_key': '***REDACTED***'}
+2024-03-09 14:18:35,454 INFO    MainThread:1588 [wandb_init.py:_log_setup():526] Logging user logs to C:\Users\the_r\Projects\deep-rl-msa\wandb\run-20240309_141835-j6e58wlv\logs\debug.log
+2024-03-09 14:18:35,454 INFO    MainThread:1588 [wandb_init.py:_log_setup():527] Logging internal logs to C:\Users\the_r\Projects\deep-rl-msa\wandb\run-20240309_141835-j6e58wlv\logs\debug-internal.log
+2024-03-09 14:18:35,454 INFO    MainThread:1588 [wandb_init.py:_jupyter_setup():472] configuring jupyter hooks <wandb.sdk.wandb_init._WandbInit object at 0x000001E671EA1FA0>
+2024-03-09 14:18:35,454 INFO    MainThread:1588 [wandb_init.py:init():566] calling init triggers
+2024-03-09 14:18:35,454 INFO    MainThread:1588 [wandb_init.py:init():573] wandb.init called with sweep_config: {}
+config: {'exp_name': 'ppo', 'gym_id': 'CartPole-v1', 'learning_rate': 0.0025, 'seed': 1, 'total_timesteps': 25000, 'torch_deterministic': True, 'track': True, 'wandb_project_name': 'CleanRL', 'wandb_entity': 'j'}
+2024-03-09 14:18:35,454 INFO    MainThread:1588 [wandb_init.py:init():616] starting backend
+2024-03-09 14:18:35,454 INFO    MainThread:1588 [wandb_init.py:init():620] setting up manager
+2024-03-09 14:18:35,460 INFO    MainThread:1588 [backend.py:_multiprocessing_setup():105] multiprocessing start_methods=spawn, using: spawn
+2024-03-09 14:18:35,462 INFO    MainThread:1588 [wandb_init.py:init():628] backend started and connected
+2024-03-09 14:18:35,485 INFO    MainThread:1588 [wandb_run.py:_label_probe_notebook():1295] probe notebook
+2024-03-09 14:18:35,486 INFO    MainThread:1588 [wandb_run.py:_label_probe_notebook():1305] Unable to probe notebook: 'NoneType' object has no attribute 'get'
+2024-03-09 14:18:35,486 INFO    MainThread:1588 [wandb_init.py:init():720] updated telemetry
+2024-03-09 14:18:35,528 INFO    MainThread:1588 [wandb_init.py:init():753] communicating run to backend with 90.0 second timeout
+2024-03-09 14:18:35,893 ERROR   MainThread:1588 [wandb_init.py:init():779] encountered error: It appears that you do not have permission to access the requested resource. Please reach out to the project owner to grant you access. If you have the correct permissions, verify that there are no issues with your networking setup.(Error 403: Forbidden)
+2024-03-09 14:18:35,994 ERROR   MainThread:1588 [wandb_init.py:init():1194] It appears that you do not have permission to access the requested resource. Please reach out to the project owner to grant you access. If you have the correct permissions, verify that there are no issues with your networking setup.(Error 403: Forbidden)
+Traceback (most recent call last):
+  File "C:\Users\the_r\anaconda3\lib\site-packages\wandb\sdk\wandb_init.py", line 1176, in init
+    run = wi.init()
+  File "C:\Users\the_r\anaconda3\lib\site-packages\wandb\sdk\wandb_init.py", line 785, in init
+    raise error
+wandb.errors.CommError: It appears that you do not have permission to access the requested resource. Please reach out to the project owner to grant you access. If you have the correct permissions, verify that there are no issues with your networking setup.(Error 403: Forbidden)
+2024-03-09 15:19:24,185 WARNING MsgRouterThr:1588 [router.py:message_loop():77] message_loop has been closed

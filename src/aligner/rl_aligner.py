@@ -1,4 +1,4 @@
-import numpy as np
+import numpy as np                      
 
 class RLAligner:
     def __init__(self, num_sequences, sequence_length):

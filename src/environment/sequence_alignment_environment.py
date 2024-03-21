@@ -1,12 +1,97 @@
 import random
+import gymnasium as gym
+import numpy as np
 
 
-class SequenceAlignmentEnvironment:
+class SequenceAlignmentEnv(gym.Env):
     def __init__(self, sequences):
-        # Keeping original for reset function during training
-        self.original_sequences = sequences
-        self.sequences = self.pad_sequences(sequences)
-        self.possible_actions = ["l", "r"]
+
+        # storing original sequences for reset function
+        self.original_sequences = self.pad_sequences(sequences)
+        self.state = self.original_sequences
+
+        self.n_sequences = len(sequences)
+        self.max_sequence_length = max(len(seq) for seq in self.state)
+
+        # One action for each board position, multiplied by 2 for left or right
+        self.action_space = gym.spaces.Discrete(self.n_sequences * self.max_sequence_length * 2)
+
+        self.observation_space = gym.spaces.Box(low=0, high=1, shape=(self.n_sequences, self.max_sequence_length),
+                                                dtype=np.float32)
+
+        # Number of times the agent can make actions before the alignment is finished
+        self.numIters = 100
+
+    def step(self, action):
+        seq_id, pos_id, direction = self.decode_action(action)
+
+        # Penalizing invalid actions and if action is valid perform the action
+
+        if seq_id >= len(self.state) or seq_id < 0:
+            reward = -1.0
+        elif pos_id >= len(self.state[seq_id]) or pos_id < 0:
+            reward = -1.0
+        elif self.state[seq_id][pos_id] == "-":
+            reward = -1.0
+        elif direction == 0:
+            if pos_id == 0:
+                reward = -1.0
+            elif self.state[seq_id][pos_id - 1] != "-":
+                reward = -1.0
+            else:
+                reward = self.move_aa(seq_id, pos_id, direction)
+        elif direction == 1:
+            if pos_id == (len(self.state[seq_id]) - 1):
+                reward = -1.0
+            elif self.state[seq_id][pos_id + 1] != "-":
+                reward = -1.0
+            else:
+                reward = self.move_aa(seq_id, pos_id, direction)
+        else:
+            reward = -1.0
+
+        self.numIters -= 1
+        info = {}
+        # print(self.decode_action())
+        return self.state, reward, self.numIters <= 0, info
+
+    def render(self):
+        pass
+
+    def toString(self):
+        env = ""
+        for sequence in self.state:
+            env += ''.join(sequence) + "\n"
+        return env
+
+    def reset(self):
+        self.state = self.original_sequences
+        return self.state
+
+    def move_aa(self, seq_id, pos_id, direction):
+
+        old_sp_score = self.calculate_sp_score()
+
+        if direction == 0:
+            self.state[seq_id][pos_id - 1] = self.state[seq_id][pos_id]
+            self.state[seq_id][pos_id] = "-"
+
+        elif direction == 1:
+            self.state[seq_id][pos_id + 1] = self.state[seq_id][pos_id]
+            self.state[seq_id][pos_id] = "-"
+
+        return self.normalize_score(self.calculate_sp_score() - old_sp_score)
+
+    def encode_action(self, seq_id, pos_id, direction):
+        action_id = seq_id * (self.max_sequence_length * 2) + pos_id * 2 + direction
+        return action_id
+
+    def decode_action(self, action_id):
+        seq_id = action_id // (self.max_sequence_length * 2)
+        pos_and_dir = action_id % (self.max_sequence_length * 2)
+        pos_id = pos_and_dir // 2
+        direction = pos_and_dir % 2
+        return seq_id, pos_id, direction
 
     def pad_sequences(self, sequences):
         max_length = max(len(seq) for seq in sequences) + 10
@@ -19,12 +104,9 @@ class SequenceAlignmentEnvironment:
                 # Choose a random position to insert a dash
                 pos = random.randint(0, len(padded_sequence))
                 padded_sequence.insert(pos, "-")
-            return ''.join(padded_sequence)
+            return padded_sequence
 
         return [pad_sequence(seq) for seq in sequences]
-
-    def get_actions(self):
-        return self.possible_actions
 
     def calculate_sp_score(self):
         match_score = 1
@@ -33,12 +115,12 @@ class SequenceAlignmentEnvironment:
         sp_score = 0
 
         # Iterate over each column
-        for col in range(len(self.sequences[0])):
+        for col in range(len(self.state[0])):
             # Iterate over each pair of sequences in the MSA
-            for i in range(len(self.sequences)):
-                for j in range(i + 1, len(self.sequences)):
-                    char1 = self.sequences[i][col]
-                    char2 = self.sequences[j][col]
+            for i in range(len(self.state)):
+                for j in range(i + 1, len(self.state)):
+                    char1 = self.state[i][col]
+                    char2 = self.state[j][col]
 
                     # Calculate the score for this pair
                     if char1 == char2:
@@ -53,52 +135,9 @@ class SequenceAlignmentEnvironment:
 
         return sp_score
 
-    def step(self, action, pos):
-        """
+    def normalize_score(self, score):
 
-        Apply an action to a specific position in the sequences.
-
-        Args:
-            action: The action to be performed
-            pos: a tuple (row, col) indicating where the action should be performed
-
-        Returns:
-            new_state: The new state of the environment after the action.
-            reward: The reward received for taking the action.
-            done: A boolean indicating if the episode has ended.
-
-        """
-        print(action, pos)
-        initial_sp = self.calculate_sp_score()
-        sequence_index, amino_acid_position = pos
-        sequence = list(self.sequences[sequence_index])
-        target = sequence[amino_acid_position]
-
-        if target == "-":
-            return self.sequences, -0.5, False  # Can't move a dash
-
-        if action == "l":
-            new_position = amino_acid_position - 1
-        elif action == "r":
-            new_position = amino_acid_position + 1
-        else:
-            return self.sequences, -0.5, False  # Invalid action
-
-        # Update position if it is possible to make the move (there is empty space)
-        if 0 <= new_position < len(sequence) and sequence[new_position] == "-":
-            sequence[new_position], sequence[amino_acid_position] = sequence[amino_acid_position], sequence[new_position]
-            self.sequences[sequence_index] = ''.join(sequence)
-            return self.sequences, self.calculate_sp_score(), True
-        else:
-            return self.sequences, -0.5, False
-
-    def toString(self):
-        env = ""
-        for sequence in self.sequences:
-            env += sequence + "\n"
-        return env
-
-    def reset(self):
-        self.sequences = self.original_sequences
-
-
+        min_score = (self.max_sequence_length * ((self.n_sequences * (self.n_sequences - 1)) / 2)) * -1
+        max_score = (self.max_sequence_length * ((self.n_sequences * (self.n_sequences - 1)) / 2)) * 1
+        normalized_score = (2 * ((score - min_score) / (max_score - min_score))) - 1
+        return normalized_score
