@@ -3,7 +3,7 @@ import torch
 from torch.distributions import Categorical
 
 
-class PPOTrainer:
+class PPO:
     def __init__(self,
                  model,
                  ppo_clip_val=0.2,
@@ -57,7 +57,6 @@ class PPOTrainer:
     def train_value(self, obs, returns):
 
         for _ in range(self.value_train_iters):
-
             self.value_optim.zero_grad()
             values = self.model.value(obs)
             value_loss = (returns - values) ** 2
@@ -65,45 +64,3 @@ class PPOTrainer:
 
             value_loss.backward()
             self.value_optim.step()
-
-def rollout(model, env, max_steps=1000):
-
-    train_data = [[], [], [], [], []]  # obs, act, reward, values, act_log_probs
-    obs = env.reset()
-
-    encoded_obs = encoder.encode(obs)
-    encoded_obs = encoded_obs.flatten()
-    input_state = torch.tensor([encoded_obs],
-                               dtype=torch.float32,
-                               device=DEVICE)
-
-    ep_reward = 0
-    for _ in range(max_steps):
-        logits, val = model(input_state)
-
-        act_distribution = Categorical(logits=logits)
-        act = act_distribution.sample()
-        act_log_prob = act_distribution.log_prob(act).item()
-
-        act, val = act.item(), val.item()
-
-        next_obs, reward, done, _ = env.step(act)
-
-        for i, item in enumerate((obs, act, reward, val, act_log_prob)):
-            train_data[i].append(item)
-
-        obs = next_obs
-        ep_reward = reward
-        if done:
-            break
-
-        encoded_obs = encoder.encode(obs)
-        encoded_obs = encoded_obs.flatten()
-        input_state = torch.tensor([encoded_obs], dtype=torch.float32, device=DEVICE)
-
-    train_data = [np.asarray(x) for x in train_data]
-
-    # Do train data filtering
-    train_data[3] = calculate_gaes(train_data[2], train_data[3])
-
-    return train_data, ep_reward
