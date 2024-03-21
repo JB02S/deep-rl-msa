@@ -1,11 +1,6 @@
 import argparse
 
-
 import numpy as np
-import torch
-
-from torch.distributions import Categorical
-
 
 from aligner.drl_aligner import DRLAligner
 from trainer.ppo import PPO

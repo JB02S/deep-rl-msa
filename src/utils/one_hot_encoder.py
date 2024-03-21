@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class OneHotEncoder:
     def __init__(self):
         # Mapping for amino acids and gap character to integers
