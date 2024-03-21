@@ -37,4 +37,31 @@ The state space every possible state the sequence alignment could be in, e.g eve
 
 ## Defining the agent
 
+### Actor critic model
 
+The agent utilises an actor critic model to decide the action to take
+
+Actor
+
+The Actor is responsible for choosing actions. Based on the current state of the environment, it decides what action to take next. The goal of the Actor is to learn a policy that maps states to the best possible actions to maximize rewards over time.
+How it learns: The Actor adjusts its policy based on feedback from the Critic. Essentially, it learns to take better actions over time by understanding which actions lead to higher rewards.
+
+Critic
+
+The Critic evaluates the actions taken by the Actor. It looks at the current state and the action taken by the Actor, and then it estimates the potential future rewards (or value) that result from that action.
+The Critic learns by comparing its predictions with the actual rewards received and then adjusting its estimates to be more accurate in the future. The difference between the predicted rewards and the actual rewards received is often referred to as the "temporal difference error" or TD error.
+
+How they work together
+
+The Actor takes actions in the environment based on its current policy.
+The Critic assesses these actions by estimating how good the action is — that is, the expected future rewards.
+The Critic then provides feedback to the Actor, indicating how off its predictions were compared to the actual outcome.
+The Actor uses this feedback to update its policy, aiming to take actions that lead to higher rewards in the future, based on the Critic's evaluations.
+
+### Proximal policy optimization
+The decision to use PPO here was to avoid large policy updates since PPO limits (clips) the amount by which the policy can change in a single training step
+
+### How the agent acts on the environment
+As the state is represented as a 2d array of characters and the actor and critic networks need numerical values, the state is first one hot encoded (there are
+21 possible values for each amino acid) and then passed into the network. The agent then returns one of the possible actions to take, the action is an encoded integer value
+which represents a sequence, amino acid, and direction to move it.
